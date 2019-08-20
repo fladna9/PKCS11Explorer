@@ -15,6 +15,7 @@ using Avalonia.Media.Imaging;
 using System.Reflection;
 using PKCS11Explorer.Tools;
 using PKCS11Explorer.Views;
+using Avalonia.Threading;
 
 namespace PKCS11Explorer.Views
 {
@@ -54,7 +55,7 @@ namespace PKCS11Explorer.Views
             MyTreeView.Width = Double.NaN;
             MyTreeView.Height = Double.NaN;
             MyTreeView.IsVisible = false;
-            LoadingBox = new LoadingBox("Please wait", "Loading PKCS11 middleware and looking for devices...", "resm:PKCS11Explorer.Assets.baseline_hourglass_empty_black_18dp.png");
+            PKCS11Lister.ListForTreeviewFinished += OnListForTreeviewFinished;
         }
 
         private async void ButtonHandler_LoadFile(object sender, RoutedEventArgs e)
@@ -80,37 +81,58 @@ namespace PKCS11Explorer.Views
                 Console.WriteLine("Canceled file selection");
             else
             {
+                LoadingBox = new LoadingBox("Please wait", "Loading PKCS11 middleware and looking for devices...", "resm:PKCS11Explorer.Assets.baseline_hourglass_empty_black_18dp.png");
                 LoadingBox.ShowDialog(this);
 
                 Console.WriteLine("Selected file: " + fileSelected[0]);
                 Console.WriteLine("Loading informations, please wait.");
 
-                try
+                Task.Run(async () => { await PKCS11Lister.ListForTreeview(fileSelected[0]); });
+                
+            }
+        }
+
+        private void OnListForTreeviewFinished(object sender, ListForTreeviewEventArgs eventArgs)
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                LoadingBox.Close();
+                
+                if(eventArgs.Success)
                 {
-                    Tree = await PKCS11Lister.ListForTreeview(fileSelected[0]);
                     Console.WriteLine("Loading done. refreshing UI.");
+                    Tree = eventArgs.MainNode;
                     DataContext = Tree.Children;
                     MyTreeView.IsVisible = true;
                 }
-                catch (Net.Pkcs11Interop.Common.UnmanagedException exception)
+                else
                 {
-                    if (exception.Message.Contains("Unable to get pointer for C_GetFunctionList function. Error code: 0x0000007F."))
+                    if (eventArgs.UnmanagedException != null && eventArgs.UnmanagedException.Message.Contains("Unable to get pointer for C_GetFunctionList function. Error code: 0x0000007F."))
                     {
                         Console.WriteLine("Not a PKCS11 middleware, aborting.");
                         var dialog = new DialogBox("Error", "The loaded library is not a valid PKCS11 middleware.", "resm:PKCS11Explorer.Assets.baseline_info_black_18dp.png", "Ok");
-                        await dialog.ShowDialog(this);
+                        dialog.ShowDialog(this);
+                    }
+                    else if (eventArgs.UnmanagedException != null)
+                    {
+                        Console.WriteLine("Problem with provided middleware: " + eventArgs.UnmanagedException.Message);
+                        var dialog = new DialogBox("Error", eventArgs.UnmanagedException.Message, "resm:PKCS11Explorer.Assets.baseline_info_black_18dp.png", "Ok");
+                        dialog.ShowDialog(this);
+                    }
+                    else if (eventArgs.Pkcs11Exception != null)
+                    {
+                        Console.WriteLine("Problem with PKCS11: " + eventArgs.Pkcs11Exception.Message);
+                        var dialog = new DialogBox("Error", eventArgs.Pkcs11Exception.Message, "resm:PKCS11Explorer.Assets.baseline_info_black_18dp.png", "Ok");
+                        dialog.ShowDialog(this);
                     }
                     else
                     {
-                        Console.WriteLine("Problem with provided middleware: " + exception.Message);
+                        Console.WriteLine("Unmanaged exception");
+                        var dialog = new DialogBox("Error", "Unmanaged exception", "resm:PKCS11Explorer.Assets.baseline_info_black_18dp.png", "Ok");
+                        dialog.ShowDialog(this);
                     }
                 }
-                catch (Net.Pkcs11Interop.Common.Pkcs11Exception exception)
-                {
-                    Console.WriteLine("Not a PKCS11 middleware: " + exception.Message);
-                }
-                LoadingBox.Close();
-            }
+            });
         }
 
         public class Node
