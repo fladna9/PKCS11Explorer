@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>netcoreapp2.1;net461</TargetFrameworks>
+    <Platforms>AnyCPU;x64</Platforms>
+    <ApplicationIcon>app_icon.ico</ApplicationIcon>
+    <Version>0.0.2</Version>
+    <Authors>Maxence MOHR</Authors>
+    <Product>PKCS11 Explorer</Product>
+    <Copyright>PKCS11 Explorer under Apache 2.0 Licensee</Copyright>
+    <PackageLicenseExpression>Apache 2.0</PackageLicenseExpression>
+    <Description>A cross platform desktop app, written in .NETCore, to explore and interact with PKCS11 tokens.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="**\*.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <AvaloniaResource Include="**\*.xaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.8.2" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.8.2" />
+    <PackageReference Include="Pkcs11Interop" Version="5.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedRessources Include="Assets\*" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Views\DialogBox.xaml" />
+    <None Remove="Views\LoadingBox.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\*" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Remove="Views\DialogBox.xaml" />
+    <AvaloniaResource Remove="Views\LoadingBox.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\DialogBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\LoadingBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Views\DialogBox.xaml.cs">
+      <DependentUpon>DialogBox.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>

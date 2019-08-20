@@ -1,0 +1,44 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        MinWidth="500" MinHeight="150" Width="300" Height="200"
+        x:Class="PKCS11Explorer.Views.MainWindow"
+        Title="PKCS11 Explorer">
+  <ScrollViewer
+    HorizontalAlignment="Stretch" >
+    <DockPanel DockPanel.Dock="Top" LastChildFill="True" VerticalAlignment="Stretch" >
+      <StackPanel
+        Orientation="Vertical"
+        VerticalAlignment="Stretch"
+        HorizontalAlignment="Stretch"
+        Margin="2">
+        <StackPanel
+          Orientation="Horizontal"
+          VerticalAlignment="Top"
+          HorizontalAlignment="Stretch"
+          Margin="2">
+          
+          <Button
+            Margin="5"
+            Click="ButtonHandler_LoadFile">
+            Load a PKCS11 Middleware
+          </Button>
+        </StackPanel>
+
+        <DockPanel DockPanel.Dock="Bottom" LastChildFill="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+          <TreeView Name="MyTreeView" Items="{Binding}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Transparent">
+            <TreeView.ItemTemplate>
+              <TreeDataTemplate ItemsSource="{Binding Children}">
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{Binding Icon, Mode=OneTime}" Height="20" Width="20" Margin="2" VerticalAlignment="Center" IsVisible="{Binding IsVisible}" />
+                  <TextBlock Text="{Binding Header}"  Margin="2" VerticalAlignment="Center"/>
+                </StackPanel>
+              </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+          </TreeView>
+        </DockPanel>
+      </StackPanel>
+    </DockPanel>
+  </ScrollViewer>
+</Window>
