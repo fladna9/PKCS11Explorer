@@ -1,4 +1,7 @@
 @echo off
+echo Clean up
+del /S /Q PKCS11Explorer\bin
+del /S /Q PKCS11Explorer\obj
 echo Building Windows Portable x86
 dotnet publish -c Release --self-contained true -f netcoreapp2.1 -r win-x86
 echo Building Windows Portable x64
