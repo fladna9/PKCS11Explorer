@@ -8,37 +8,70 @@
   <ScrollViewer
     HorizontalAlignment="Stretch" >
     <DockPanel DockPanel.Dock="Top" LastChildFill="True" VerticalAlignment="Stretch" >
-      <StackPanel
-        Orientation="Vertical"
-        VerticalAlignment="Stretch"
-        HorizontalAlignment="Stretch"
-        Margin="2">
-        <StackPanel
-          Orientation="Horizontal"
-          VerticalAlignment="Top"
-          HorizontalAlignment="Stretch"
-          Margin="2">
-          
-          <Button
-            Margin="5"
-            Click="ButtonHandler_LoadFile">
-            Load a PKCS11 Middleware
-          </Button>
-        </StackPanel>
+      <!-- Menu, will be added
+        <Menu DockPanel.Dock="Top">
+          <MenuItem Header="_File">
+            <MenuItem Header="_Open..."/>
+            <Separator/>
+            <MenuItem Header="_Exit"/>
+          </MenuItem>
+          <MenuItem Header="_Edit">
+            <MenuItem Header="Copy"/>
+            <MenuItem Header="Paste"/>
+          </MenuItem>
+        </Menu>
+        -->
+      <TabControl>
+        <TabItem Header="PKCS11 Explorer" VerticalContentAlignment="Center">
+          <StackPanel
+            Orientation="Vertical"
+            HorizontalAlignment="Stretch"
+            Margin="2">
+            <StackPanel
+              Orientation="Horizontal"
+              VerticalAlignment="Top"
+              HorizontalAlignment="Stretch"
+              Margin="2">
 
-        <DockPanel DockPanel.Dock="Bottom" LastChildFill="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-          <TreeView Name="MyTreeView" Items="{Binding}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Transparent">
-            <TreeView.ItemTemplate>
-              <TreeDataTemplate ItemsSource="{Binding Children}">
-                <StackPanel Orientation="Horizontal">
-                  <Image Source="{Binding Icon, Mode=OneTime}" Height="20" Width="20" Margin="2" VerticalAlignment="Center" IsVisible="{Binding IsVisible}" />
-                  <TextBlock Text="{Binding Header}"  Margin="2" VerticalAlignment="Center"/>
-                </StackPanel>
-              </TreeDataTemplate>
-            </TreeView.ItemTemplate>
-          </TreeView>
-        </DockPanel>
-      </StackPanel>
+              <Button
+                Margin="5"
+                Click="ButtonHandler_LoadFile">
+                Load a PKCS11 Middleware
+              </Button>
+            </StackPanel>
+
+            <DockPanel DockPanel.Dock="Bottom" LastChildFill="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+              <TreeView Name="MyTreeView" Items="{Binding}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="Transparent">
+                <TreeView.ItemTemplate>
+                  <TreeDataTemplate ItemsSource="{Binding Children}">
+                    <StackPanel Orientation="Horizontal">
+                      <Image Source="{Binding Icon, Mode=OneTime}" Height="20" Width="20" Margin="2" VerticalAlignment="Center" IsVisible="{Binding IsVisible}" />
+                      <TextBlock Text="{Binding Header}"  Margin="2" VerticalAlignment="Center"/>
+                    </StackPanel>
+                  </TreeDataTemplate>
+                </TreeView.ItemTemplate>
+              </TreeView>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Bottom" LastChildFill="True" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+
+            </DockPanel>
+          </StackPanel>
+        </TabItem>
+        <TabItem Header="About" VerticalContentAlignment="Center">
+          <StackPanel Orientation="Vertical" Margin="5">
+            <Image Source="resm:PKCS11Explorer.Assets.baseline_sim_card_black_18dp.png?assembly=PKCS11Explorer"/>
+            <TextBlock HorizontalAlignment="Center" Margin="0,10,0,0">Thanks for using PKCS11 Explorer!</TextBlock>
+            <TextBlock HorizontalAlignment="Center">This app has been developed by fladnaG.net and is available as Apache 2.0 license.</TextBlock>
+            <TextBlock HorizontalAlignment="Center">You can find new releases on https://git.maxencemohr.me</TextBlock>
+            <StackPanel HorizontalAlignment="Center">
+            <TextBlock HorizontalAlignment="Left" Margin="0,30,0,0">We are using the follwing libraries, many thanks to authors:</TextBlock>
+            <TextBlock HorizontalAlignment="Left" Margin="0,0,0,0">  - AvaloniaUI for crossplatform developpement (MIT License, (c) 2014 Steven Kirk),</TextBlock>
+            <TextBlock HorizontalAlignment="Left" Margin="0,0,0,0">  - PKCS11Interop (Apache 2.0 License, (c) 2013 The Pkcs11Interop Project)</TextBlock>
+            <TextBlock HorizontalAlignment="Left" Margin="0,0,0,0">  - Material Icons (Apache 2.0 License, (c) 2014 Google)</TextBlock>
+            </StackPanel>
+          </StackPanel>
+        </TabItem>
+      </TabControl>
     </DockPanel>
   </ScrollViewer>
 </Window>

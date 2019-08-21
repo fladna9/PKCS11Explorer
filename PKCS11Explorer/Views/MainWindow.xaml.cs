@@ -16,6 +16,7 @@ using System.Reflection;
 using PKCS11Explorer.Tools;
 using PKCS11Explorer.Views;
 using Avalonia.Threading;
+using PKCS11Explorer.Models;
 
 namespace PKCS11Explorer.Views
 {
@@ -81,14 +82,29 @@ namespace PKCS11Explorer.Views
                 Console.WriteLine("Canceled file selection");
             else
             {
-                LoadingBox = new LoadingBox("Please wait", "Loading PKCS11 middleware and looking for devices...", "resm:PKCS11Explorer.Assets.baseline_hourglass_empty_black_18dp.png");
-                LoadingBox.ShowDialog(this);
+                try
+                {
+                    var loadingTask = Task.Run(() => PKCS11Lister.Instance.Initialize(fileSelected[0]));
+                    LoadingBox = new LoadingBox("Please wait", "Loading PKCS11 middleware...", "resm:PKCS11Explorer.Assets.baseline_hourglass_orange_black_18dp.png");
+                    LoadingBox.ShowDialog(this);
 
-                Console.WriteLine("Selected file: " + fileSelected[0]);
-                Console.WriteLine("Loading informations, please wait.");
-
-                Task.Run(async () => { await PKCS11Lister.ListForTreeview(fileSelected[0]); });
-                
+                    Console.WriteLine("Selected file: " + fileSelected[0]);
+                    Console.WriteLine("Loading informations, please wait.");
+                    await loadingTask;
+                    LoadingBox.Close();
+                    Console.WriteLine("Loaded PKCS11 middleware.");
+                    Task.Run(() => { PKCS11Lister.Instance.ListForTreeview(); });
+                }
+                catch(Exception exception)
+                {
+                    LoadingBox.Close();
+                    Console.WriteLine("Problem with PKCS11: " + exception.Message);
+                    Console.WriteLine("Stacktrace: " + exception.StackTrace);
+                    if (Tree.Children?.Count > 0)
+                        Tree.Children?.Clear();
+                    var dialog = new DialogBox("Error", exception.Message + "\nDid you select a valid PKCS11 library?" , "resm:PKCS11Explorer.Assets.baseline_highlight_off_red_18dp.png", "Ok");
+                    await dialog.ShowDialog(this);
+                }
             }
         }
 
@@ -133,40 +149,6 @@ namespace PKCS11Explorer.Views
                     }
                 }
             });
-        }
-
-        public class Node
-        {
-            private ObservableCollection<Node> _children;
-            public string IconURI { get; set; }
-            public string Header { get; set; }
-            public bool IsVisible { get
-                {
-                    return ! string.IsNullOrWhiteSpace(IconURI);
-                }
-            }
-            public IBitmap Icon { get
-                {
-                    if (IsVisible)
-                        return (Bitmap)BitmapValueConverter.Instance.Convert((object)IconURI, typeof(IBitmap), null, null);
-                    else
-                        return null;
-                }
-            }
-
-            public ObservableCollection<Node> Children
-            {
-                get
-                {
-                    if (_children == null)
-                        _children = new ObservableCollection<Node>();
-                    return _children;
-                }
-                set
-                {
-                    _children = value;
-                }
-            }
         }
     }
 }
