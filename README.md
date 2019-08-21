@@ -1,4 +1,3 @@
-
 # PKCS11 Explorer
 
 ## What is it?
@@ -14,11 +13,16 @@ Currently, we're compatible with:
 - Windows x64
 - macOS x64
 - GNU/Linux x64
+
 *There is also a GNU/Linux ARM build, but I doubt it works well...*
 
 ### Readers and Tokens supported
+This app **_should be_ compatible with all PKCS11-compatible devices**
+
+It has been successfully tested on:
 - Open Smardcard compatible cards (OpenSC, Nitrokey HSM 1 and 2)
 
+*Please open an issue if you have tested this on an unlisted device*
 
 ## What's behind this?
 This app is developed in .NET Core using C# and XAML.
