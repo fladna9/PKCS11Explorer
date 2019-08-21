@@ -9,7 +9,7 @@ namespace PKCS11Explorer
         {
             get
             {
-                return "0.3";
+                return "0.4";
             }
         }
         public override void Initialize()
